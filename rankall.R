@@ -5,22 +5,6 @@ rankall <- function(outcome, num = "best") {
 		stop("invalid outcome")
 	}
 
-	## Check num
-	ranking = 0
-	if (num == "best") {
-		ranking = 1
-	}
-	else if (num == "worst") {
-		ranking = -1
-	}
-	else if ((num %% 1 == 0) & (num > 0)) {
-		ranking = num
-	}
-	else {
-		stop("invalid ranking")
-	}
-
-
 	## Read outcome data
 	odata <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
 	hnames <- odata[, "Hospital.Name"]
@@ -30,6 +14,7 @@ rankall <- function(outcome, num = "best") {
 	pnrate <- as.numeric(odata[, "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"])
 
 	## For each state, find the hospital of the given rank
+	df<-NULL
 	for (curr_state in sort(state.abb)) {
 		sis <- which(states == curr_state)
 		state_hnames <- hnames[sis]
@@ -44,6 +29,21 @@ rankall <- function(outcome, num = "best") {
 			state_rate <- pnrate[sis]
 		}
 
+		## Check num
+		ranking = 0
+		if (num == "best") {
+			ranking = 1
+		}
+		else if (num == "worst") {
+			ranking = -1
+		}
+		else if ((num %% 1 == 0) & (num > 0)) {
+			ranking = num
+		}
+		else {
+			stop("invalid ranking")
+		}
+
 		hname = NA
 		indexes1 <- order(state_rate, na.last = NA, decreasing = FALSE)
 		if (ranking == -1) {
@@ -56,16 +56,12 @@ rankall <- function(outcome, num = "best") {
 			indexes2 <- match(val, state_rate_subset)
 			hname <- min(state_hnames_subset[indexes2])
 		}
-		print(curr_state)
-		print(hname)
+
+		rbind(df, data.frame(hospital=hname,state=curr_state)) -> df
 	}
-	stop("..................")
-
-
-	## Check that state and outcome are valid
-
 	
 	## Return a data frame with the hospital names and the
 	## (abbreviated) state name
-	hname
+	rownames(df) <- sort(state.abb)
+	df
 }
