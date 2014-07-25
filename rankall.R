@@ -54,7 +54,7 @@ rankall <- function(outcome, num = "best") {
 			state_rate_subset <- state_rate[indexes1]
 			state_hnames_subset <- state_hnames[indexes1]
 			val <- state_rate[indexes1[ranking]]
-			indexes2 <- match(val, state_rate_subset)
+			indexes2 <- which(state_rate_subset==val)
 			hname <- min(state_hnames_subset[indexes2])
 		}
 
