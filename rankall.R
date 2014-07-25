@@ -15,7 +15,8 @@ rankall <- function(outcome, num = "best") {
 
 	## For each state, find the hospital of the given rank
 	df<-NULL
-	for (curr_state in sort(state.abb)) {
+	state_abb <- sort(unique(states))
+	for (curr_state in sort(state_abb)) {
 		sis <- which(states == curr_state)
 		state_hnames <- hnames[sis]
 		state_rate <- vector()
@@ -62,6 +63,6 @@ rankall <- function(outcome, num = "best") {
 	
 	## Return a data frame with the hospital names and the
 	## (abbreviated) state name
-	rownames(df) <- sort(state.abb)
+	rownames(df) <- state_abb
 	df
 }
