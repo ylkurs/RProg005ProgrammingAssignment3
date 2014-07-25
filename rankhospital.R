@@ -24,7 +24,7 @@ rankhospital <- function(state, outcome, num = "best") {
 	else {
 		stop("invalid ranking")
 	}
-	stop("stop")
+
 	## Read outcome data
 	odata <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
 	hnames <- odata[, "Hospital.Name"]
@@ -49,7 +49,17 @@ rankhospital <- function(state, outcome, num = "best") {
 	
 	## Return hospital name in that state with the given rank
 	## 30-day death rate
-	mi1 <- which( state_rate == min(state_rate, na.rm = TRUE) )
-	best_hname = min(state_hnames[mi1])
-	best_hname
+	hname = NA
+	indexes1 <- order(state_rate, na.last = NA, decreasing = FALSE)
+	if (ranking == -1) {
+		ranking = length(indexes1)
+	}
+	if (ranking <= length(indexes1)) {
+		state_rate_subset <- state_rate[indexes1]
+		state_hnames_subset <- state_hnames[indexes1]
+		val <- state_rate[indexes1[ranking]]
+		indexes2 <- match(val, state_rate_subset)
+		hname <- min(state_hnames_subset[indexes2])
+	}
+	hname
 }
